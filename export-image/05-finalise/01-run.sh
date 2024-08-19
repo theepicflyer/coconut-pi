@@ -86,8 +86,6 @@ cp "$ROOTFS_DIR/etc/rpi-issue" "$INFO_FILE"
 ROOT_DEV="$(awk "\$2 == \"${ROOTFS_DIR}\" {print \$1}" /etc/mtab)"
 
 unmount "${ROOTFS_DIR}"
-zerofree "${ROOT_DEV}"
-
 unmount_image "${IMG_FILE}"
 
 mkdir -p "${DEPLOY_DIR}"
