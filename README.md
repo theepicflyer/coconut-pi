@@ -1,8 +1,16 @@
+# Coconut Pi
+
+Coconut Pi is a distribution of Raspberry Pi OS with modifications to boost resilience against sudden power loss. It is meant for Raspberry Pi deployments where users might be inclined to unplug the device without a safe shutdown, or scenarios like solar power. Capabilities are built with btrfs, overlayfs and Raspberry Pi's A/B booting system.
+
+## Principles
+* Coconut Pi should be as compatible as possible with first-party Pi tools like `raspi-config`.
+* The OS should behave as close to Raspberry Pi OS as possible.
+* Additional scripts and commands are created where incompatible.
+
+## Development
+Coconut Pi is built with `pi-gen`, which this repo is a fork of.
+
 # pi-gen
-
-Tool used to create Raspberry Pi OS images, and custom images based on Raspberry Pi OS,
-which was in turn derived from the Raspbian project.
-
 **Note**: Raspberry Pi OS 32 bit images are based primarily on Raspbian, while
 Raspberry Pi OS 64 bit images are based primarily on Debian.
 
