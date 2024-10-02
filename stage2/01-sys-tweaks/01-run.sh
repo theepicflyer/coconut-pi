@@ -1,6 +1,6 @@
 #!/bin/bash -e
 
-install -m 755 files/resize2fs_once	"${ROOTFS_DIR}/etc/init.d/"
+install -m 755 files/resize2fs_once	"${ROOTFS_DIR}/etc/init.d/" #TODO: Figure out resize on first boot
 
 install -m 644 files/50raspi		"${ROOTFS_DIR}/etc/apt/apt.conf.d/"
 

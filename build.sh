@@ -87,7 +87,7 @@ run_stage(){
 	pushd "${STAGE_DIR}" > /dev/null
 
 	STAGE_WORK_DIR="${WORK_DIR}/${STAGE}"
-	ROOTFS_DIR="${STAGE_WORK_DIR}"/rootfs
+	ROOTFS_DIR="${STAGE_WORK_DIR}"/rootfs/@ # Includes the subvolume name. Effect remains to be seen
 
 	unmount "${WORK_DIR}/${STAGE}"
 

@@ -7,7 +7,7 @@ unmount_image "${IMG_FILE}"
 rm -f "${IMG_FILE}"
 
 rm -rf "${ROOTFS_DIR}"
-mkdir -p "${ROOTFS_DIR}"
+mkdir -p "${ROOTFS_DIR%??}"
 
 BOOT_SIZE="$((512 * 1024 * 1024))"
 ROOT_SIZE=$(du -x --apparent-size -s "${EXPORT_ROOTFS_DIR}" --exclude var/cache/apt/archives --exclude boot/firmware --block-size=1 | cut -f 1)
@@ -58,9 +58,12 @@ fi
 mkdosfs -n bootfs -F "$FAT_SIZE" -s 4 -v "$BOOT_DEV" > /dev/null
 mkfs.btrfs -L rootfs "$ROOT_DEV" > /dev/null
 
-mount -v "$ROOT_DEV" "${ROOTFS_DIR}" -t btrfs
+mount -v "$ROOT_DEV" "${ROOTFS_DIR%??}" -t btrfs
+btrfs subvolume create ${ROOTFS_DIR} # Already includes the /@
+# Maybe add a home subvolume at some point
+
 mkdir -p "${ROOTFS_DIR}/boot/firmware"
 mount -v "$BOOT_DEV" "${ROOTFS_DIR}/boot/firmware" -t vfat
 
-rsync -aHAXx --exclude /var/cache/apt/archives --exclude /boot/firmware "${EXPORT_ROOTFS_DIR}/" "${ROOTFS_DIR}/"
-rsync -rtx "${EXPORT_ROOTFS_DIR}/boot/firmware/" "${ROOTFS_DIR}/boot/firmware/"
+rsync -aHAXx --exclude /var/cache/apt/archives --exclude /boot/firmware "${EXPORT_ROOTFS_DIR}/@/" "${ROOTFS_DIR}/"
+rsync -rtx "${EXPORT_ROOTFS_DIR}/@/boot/firmware/" "${ROOTFS_DIR}/boot/firmware/"
