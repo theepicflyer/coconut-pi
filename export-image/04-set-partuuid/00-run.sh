@@ -10,4 +10,8 @@ ROOT_PARTUUID="${IMGID}-02"
 sed -i "s/BOOTDEV/PARTUUID=${BOOT_PARTUUID}/" "${ROOTFS_DIR}/etc/fstab"
 sed -i "s/ROOTDEV/PARTUUID=${ROOT_PARTUUID}/" "${ROOTFS_DIR}/etc/fstab"
 
+sed -i "s/ROOT_SUBVOL_NAME/${ROOT_SUBVOL_NAME}/" "${ROOTFS_DIR}/etc/fstab"
+sed -i "s/HOME_SUBVOL_NAME/${HOME_SUBVOL_NAME}/" "${ROOTFS_DIR}/etc/fstab"
+
 sed -i "s/ROOTDEV/PARTUUID=${ROOT_PARTUUID}/" "${ROOTFS_DIR}/boot/firmware/cmdline.txt"
+sed -i "s/ROOT_SUBVOL_NAME/${ROOT_SUBVOL_NAME}/" "${ROOTFS_DIR}/boot/firmware/cmdline.txt"

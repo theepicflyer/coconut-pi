@@ -87,7 +87,7 @@ run_stage(){
 	pushd "${STAGE_DIR}" > /dev/null
 
 	STAGE_WORK_DIR="${WORK_DIR}/${STAGE}"
-	ROOTFS_DIR="${STAGE_WORK_DIR}"/rootfs/@ # Includes the subvolume name. Effect remains to be seen
+	ROOTFS_DIR="${STAGE_WORK_DIR}"/rootfs
 
 	unmount "${WORK_DIR}/${STAGE}"
 
@@ -204,6 +204,8 @@ export LOG_FILE="${WORK_DIR}/build.log"
 
 export TARGET_HOSTNAME=${TARGET_HOSTNAME:-raspberrypi}
 
+export ROOT_SUBVOL_NAME=${ROOT_SUBVOL_NAME:-@rootA}
+export HOME_SUBVOL_NAME=${HOME_SUBVOL_NAME:-@home}
 export FIRST_USER_NAME=${FIRST_USER_NAME:-pi}
 export FIRST_USER_PASS
 export DISABLE_FIRST_BOOT_USER_RENAME=${DISABLE_FIRST_BOOT_USER_RENAME:-0}

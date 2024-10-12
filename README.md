@@ -10,6 +10,12 @@ Coconut Pi is a distribution of Raspberry Pi OS with modifications to boost resi
 ## Development
 Coconut Pi is built with `pi-gen`, which this repo is a fork of.
 
+## New Environmental variables
+These environmental variables are added for Coconut Pi. They are similarly set in `config`.
+
+ * `ROOT_SUBVOLUME_NAME` (Default: `@rootA`)
+ * `HOME_SUBVOLUME_NAME` (Default: `@home`)
+
 # pi-gen
 **Note**: Raspberry Pi OS 32 bit images are based primarily on Raspbian, while
 Raspberry Pi OS 64 bit images are based primarily on Debian.

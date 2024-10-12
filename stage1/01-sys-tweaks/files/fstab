@@ -1,3 +1,4 @@
 proc            /proc           proc    defaults          0       0
 BOOTDEV         /boot/firmware  vfat    defaults          0       2
-ROOTDEV         /               btrfs   defaults,noatime,subvol=@  0       1
+ROOTDEV         /               btrfs   defaults,noatime,subvol=ROOT_SUBVOL_NAME  0       1
+ROOTDEV         /home           btrfs   defaults,noatime,subvol=HOME_SUBVOL_NAME  0       1
