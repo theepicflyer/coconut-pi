@@ -1,0 +1,3 @@
+chmod -x /etc/update-motd.d/97-overlayroot
+truncate -s 0 /etc/motd
+echo "Yay"

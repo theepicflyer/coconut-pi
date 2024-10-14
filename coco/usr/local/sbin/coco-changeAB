@@ -1,0 +1,45 @@
+#!/bin/bash
+# Changes config.txt and tryboot.txt to set which root boots by default.
+
+HELPER_PATH="/usr/local/sbin/coco-info"
+source "$HELPER_PATH"
+
+echo "########## Script: Change AB Default Boot #########"
+boot="/boot/firmware"
+
+# Get change direction
+from=$(get_AB_default)
+if [ "$from" = "A" ]; then
+    to=B
+else
+    to=A
+fi
+echo "Currently default: $from"
+echo "Changing so that new default is $to"
+
+if [ $(get_bootro_now) -eq 1 ]; then
+    if ! mount -o remount,rw /boot/firmware 2>/dev/null ; then
+        echo "Unable to mount boot partition as writable - cannot enable"
+        return 1
+    fi
+    BOOTRO=yes
+else
+    BOOTRO=no
+fi
+
+# Copy the config files
+cp "${boot}/config.txt.${to}" "${boot}/config.txt"
+cp "${boot}/config.txt.${from}" "${boot}/tryboot.txt"
+
+if [ "$BOOTRO" = "yes" ] ; then
+    if ! mount -o remount,ro /boot/firmware 2>/dev/null ; then
+        echo "Unable to remount boot partition as read-only"
+    fi
+fi
+
+# Check that it is successful
+if [ $(get_AB_default) = $to ] && [ $(get_tryboot_default) = $from ]; then
+    echo "Success"
+else 
+    echo "ERROR: Something went wrong"
+fi

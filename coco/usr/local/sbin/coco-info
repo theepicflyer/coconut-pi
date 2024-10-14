@@ -1,0 +1,118 @@
+#!/bin/bash
+# Helper script to get many of the configs.
+# Based off raspi-config
+# Info only, no sudo required.
+
+get_AB_now() {
+  AB=$(mount | grep "/@root")
+  echo $(echo "$AB" | sed -E 's#.*/@root(.).*#\1#')
+}
+
+get_AB_default() {
+  if grep -q "cmdlineA.txt" /boot/firmware/config.txt; then
+    echo "A"
+  elif grep -q "cmdlineB.txt" /boot/firmware/config.txt; then
+    echo "B"
+  fi
+}
+
+get_tryboot_default() {
+  if grep -q "cmdlineA.txt" /boot/firmware/tryboot.txt; then
+    echo "A"
+  elif grep -q "cmdlineB.txt" /boot/firmware/tryboot.txt; then
+    echo "B"
+  fi
+}
+
+get_overlay_now() {
+  grep -q "overlayroot=tmpfs" /proc/cmdline
+  if [ $? -eq 0 ]; then
+    echo 1
+  else 
+    echo 0
+  fi
+}
+
+get_overlay_conf_A() {
+  grep -q "overlayroot=tmpfs" /boot/firmware/cmdlineA.txt
+  if [ $? -eq 0 ]; then
+    echo 1
+  else 
+    echo 0
+  fi
+}
+
+get_overlay_conf_B() {
+  grep -q "overlayroot=tmpfs" /boot/firmware/cmdlineB.txt
+  if [ $? -eq 0 ]; then
+    echo 1
+  else 
+    echo 0
+  fi
+}
+
+get_bootro_now() {
+  findmnt /boot/firmware | grep -q " ro,"
+  if [ $? -eq 0 ]; then
+    echo 1
+  else 
+    echo 0
+  fi
+}
+
+get_bootro_conf() {
+  grep /boot/firmware /etc/fstab | grep -q "defaults.*,ro[ ,]"
+  if [ $? -eq 0 ]; then
+    echo 1
+  else 
+    echo 0
+  fi
+}
+
+get_home_sync() {
+  findmnt /home | grep -wq "sync"
+  if [ $? -eq 0 ]; then
+    echo 1
+  else 
+    echo 0
+  fi
+}
+
+echo ""
+echo "############### Coconut Pi Info ################"
+
+#echo "Important information about A/B booting and Overlay"
+
+echo ""
+AB=$(get_AB_now)
+AB_default=$(get_AB_default)
+
+echo "Root Subvolume Current:      $AB"
+echo "Root Subvolume Setting:      $AB_default"
+
+echo ""
+
+if [ $(get_overlay_now) -eq 1 ]; then
+  echo "Root Overlay Current:       ON"
+else
+  echo "Root Overlay Current:       OFF"
+fi
+
+if [ $(get_overlay_conf_A) -eq 1 ]; then
+  echo "Root Overlay Setting (A):   ON"
+else
+  echo "Root Overlay Setting (A):   OFF"
+fi
+
+if [ $(get_overlay_conf_B) -eq 1 ]; then
+  echo "Root Overlay Setting (B):   ON"
+else
+  echo "Root Overlay Setting (B):   OFF"
+fi
+echo ""
+
+if [ $(get_home_sync) -eq 1 ]; then
+  echo "Home Mounted as Sync:       ON"
+else
+  echo "Home Mounted as Sync:       OFF"
+fi 

@@ -1,0 +1,48 @@
+#!/bin/bash
+# Delete backup root, snapshot current root to backup root
+# Intended to be used before an update. You can then update to the copy
+
+HELPER_PATH="/usr/local/sbin/coco-info"
+source "$HELPER_PATH"
+
+echo "############### Script: Backup Root ###############"
+
+mount_point="/mnt/hi"
+
+mkdir -p $mount_point
+
+from=$(get_AB_now)
+if [ "$from" = "A" ]; then
+    to=B
+else
+    to=A
+fi
+
+# Check if -y flag is provided
+if [[ "$1" == "-y" ]]; then
+    perform_backup=true
+    echo "-y provided, continuing without confirmation."
+else
+    read -p "This action will copy root$from to root$to. Existing root$to will be lost entirely. Confirm? (Y/N) " user_input
+    if [[ "$user_input" == "Y" || "$user_input" == "y" ]]; then
+        perform_backup=true
+    else
+        perform_backup=false
+    fi
+fi
+
+if $perform_backup; then
+    # Mount the whole p2 partition (root of the whole btrfs fs).
+    if ! mount /dev/mmcblk0p2 $mount_point 2>/dev/null ; then
+        echo "ERROR: Unable to mount whole p2 partition. Or maybe it's already mounted."
+        exit 1
+    fi
+
+    btrfs subvolume delete "${mount_point}/@root${to}"
+    btrfs subvolume snapshot "${mount_point}/@root${from}/" "${mount_point}/@root${to}"
+
+    umount $mount_point
+    echo "Done"
+else
+    echo "No changes made. Exiting."
+fi

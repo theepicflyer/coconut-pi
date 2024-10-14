@@ -1,0 +1,87 @@
+#!/bin/bash
+# Based on raspi-config
+# Toggles on or off the overlayroot setting. 
+
+HELPER_PATH="/usr/local/sbin/coco-info"
+source "$HELPER_PATH"
+
+echo "########### Script: Toggle Overlayroot ############"
+
+OVERLAY_CMDLINE="overlayroot=tmpfs:recurse=0"
+
+enable_overlayfs() {
+  CMDLINE="/boot/firmware/cmdline$1.txt"
+  # mount the boot partition as writable if it isn't already
+  if [ $(get_bootro_now) -eq 1 ]; then
+    if ! mount -o remount,rw /boot/firmware 2>/dev/null ; then
+      echo "Unable to mount boot partition as writable - cannot enable"
+      return 1
+    fi
+    BOOTRO=yes
+  else
+    BOOTRO=no
+  fi
+
+  # modify command line
+  if ! grep -q $OVERLAY_CMDLINE $CMDLINE ; then
+    sed -i $CMDLINE -e "s/^/${OVERLAY_CMDLINE} /"
+  fi
+
+  if [ "$BOOTRO" = "yes" ] ; then
+    if ! mount -o remount,ro /boot/firmware 2>/dev/null ; then
+      echo "Unable to remount boot partition as read-only"
+    fi
+  fi
+}
+
+disable_overlayfs() {
+  CMDLINE="/boot/firmware/cmdline$1.txt"
+  # mount the boot partition as writable if it isn't already
+  if [ $(get_bootro_now) -eq 1 ]; then
+    if ! mount -o remount,rw /boot/firmware 2>/dev/null ; then
+      echo "Unable to mount boot partition as writable - cannot disable"
+      return 1
+    fi
+    BOOTRO=yes
+  else
+    BOOTRO=no
+  fi
+
+  # modify command line
+  sed -i $CMDLINE -e "s/\(.*\)${OVERLAY_CMDLINE} \(.*\)/\1\2/"
+
+  if [ "$BOOTRO" = "yes" ] ; then
+    if ! mount -o remount,ro /boot/firmware 2>/dev/null ; then
+      echo "Unable to remount boot partition as read-only"
+    fi
+  fi
+}
+
+AB=$(get_AB_now)
+
+if [[ "$1" == "A" || "$1" == "B" ]]; then
+  echo "You selected to change root $1"
+  AB=$1
+elif [[ "$1" == "" ]] then
+  echo "Currently booted system is $AB."
+fi
+
+if [ $(get_overlay_conf_${AB}) -eq 1 ]; then
+  #echo "Overlayroot for root $AB is currently enabled. Disabling now"
+  disable_overlayfs $AB
+
+  if [ $(get_overlay_conf_${AB}) -eq 1 ]; then
+    echo "ERROR, cmdline edit did not work."
+  else 
+    echo "Overlayroot for root $AB has been DISABLED. Reboot to take effect."
+  fi
+else
+  #echo "Overlayroot for root $AB is currently disabled. Enabling now"
+  enable_overlayfs $AB
+
+  if [ $(get_overlay_conf_${AB}) -eq 1 ]; then
+    echo "Overlayroot for root $AB has been ENABLED. Reboot to take effect."
+  else 
+    echo "ERROR, cmdline edit did not work."
+  fi
+fi

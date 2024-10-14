@@ -1,0 +1,11 @@
+Package: coconut-pi-scripts
+Version: 0.1
+Section: base
+Priority: optional
+Architecture: all
+Depends: bash
+Maintainer: theepicflyer <xiejc2000@gmail.com>
+Description: Coconut Pi Scripts
+ This package contains the scripts use to help with the
+ A/B, btrfs, overlayed Pi filesystem.
+ 

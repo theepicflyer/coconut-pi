@@ -1,0 +1,17 @@
+#!/bin/bash
+
+# Source helpers.sh from dev if existing, else installed
+DEV_HELPER_PATH="~/pi-scripts/usr/local/sbin/coco/helpers"
+INSTALLED_HELPER_PATH="/usr/local/sbin/coco-info"
+
+echo "############### Coconut Pi ###############"
+if [ -f "$DEV_HELPER_PATH" ]; then
+    source "$DEV_HELPER_PATH"
+elif [ -f "$INSTALLED_HELPER_PATH" ]; then
+    source "$INSTALLED_HELPER_PATH"
+else
+    echo "Helper script not found!"
+    exit 1
+fi
+
+echo "###################################################"
