@@ -76,6 +76,6 @@ mount -v -t btrfs -o subvol=${HOME_SUBVOL_NAME} "$ROOT_DEV" "${ROOTFS_DIR}/home"
 mkdir -p "${ROOTFS_DIR}/boot/firmware"
 mount -v -t vfat "$BOOT_DEV" "${ROOTFS_DIR}/boot/firmware" 
 
-rsync -aHAXx --exclude /var/cache/apt/archives --exclude /boot/firmware /home "${EXPORT_ROOTFS_DIR}/" "${ROOTFS_DIR}/"
+rsync -aHAXx --exclude /var/cache/apt/archives --exclude /boot/firmware "${EXPORT_ROOTFS_DIR}/" "${ROOTFS_DIR}/"
 rsync -rtx "${EXPORT_ROOTFS_DIR}/boot/firmware/" "${ROOTFS_DIR}/boot/firmware/"
 rsync -aHAXx "${EXPORT_ROOTFS_DIR}/home/" "${ROOTFS_DIR}/home/"
